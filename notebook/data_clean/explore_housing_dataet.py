@@ -1,7 +1,4 @@
-from my_proj.data.get_data_helper import load_housing_data
-
-
-
+from data.get_data_helper import load_housing_data
 
 housing = load_housing_data()
 

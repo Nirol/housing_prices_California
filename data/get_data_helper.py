@@ -8,8 +8,8 @@ from six.moves import urllib
 DOWNLOAD_ROOT = "https://raw.githubusercontent.com/ageron/handson-ml/master/"
 
 
-PROJECT_FOLDER = "C:\\Users\\owner\\PycharmProjects\\handson-ml\\"
-_HOUSING_DATA_PATH = PROJECT_FOLDER + "my_proj\\data\\datasets\\housing\\housing.csv"
+PROJECT_FOLDER = "C:\\Users\\owner\\PycharmProjects\\housing_ml\\"
+_HOUSING_DATA_PATH = PROJECT_FOLDER + "data\\datasets\\housing\\housing.csv"
 
 HOUSING_PATH = os.path.join("my_proj","data","datasets", "housing")
 HOUSING_URL = DOWNLOAD_ROOT + "datasets/housing/housing.tgz"

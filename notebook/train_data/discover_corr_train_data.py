@@ -5,6 +5,15 @@ corr_matrix = housing.corr()
 
 corr_matrix["median_house_value"].sort_values(ascending=False)
 
+attributes = ["median_house_value", "rooms_per_household", "bedrooms_per_room",
+ "population_per_household"]
+corr_matrix = housing[attributes].corr()
+
+corr_matrix["median_house_value"].sort_values(ascending=False)
+
+scatter_matrix(housing[attributes], figsize=(12, 8))
+
+
 #value which is the target feature in high corr with latitude and age/
 #-0.14272 since as we closer to the ocean, smaller latitude values and higher house price
 # 0.11411 with age not sure why
