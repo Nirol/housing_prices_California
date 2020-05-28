@@ -1,5 +1,69 @@
 from sklearn.base import BaseEstimator, TransformerMixin
 import numpy as np
+import pandas as pd
+
+
+CAPPED_VALUE_DICT = {
+    'median_house_value':  500001.0,
+    'housing_median_age':  52.0
+
+}
+
+
+class CappedValuesRemover:
+    def  __init__(self, feature_to_remove):  # no *args or **kargs
+        self.feature_to_remove = feature_to_remove
+    def transform(self, housing):
+        df_to_remove = pd.DataFrame()
+        to_remove_samples = housing[housing[self.feature_to_remove] == CAPPED_VALUE_DICT[self.feature_to_remove]]
+        df_to_remove = df_to_remove.append(to_remove_samples)
+        housing_clean = pd.concat([housing, df_to_remove, df_to_remove]).drop_duplicates(
+                        keep=False)
+        housing_clean.reset_index(drop=True, inplace=True)
+        return housing_clean
+
+
+
+
+
+
+
+CLEAN_OUTLIERS_DICT = {
+
+
+    'hard_filter': {'features': ["total_rooms", "total_bedrooms"],
+                    'upper_qurant_percent': 0.975, 'lower_qurant_percent': 0},
+    'med_filter': {'features': ["households"], 'upper_qurant_percent': 0.9733,
+                   'lower_qurant_percent': 0},
+    'easy_filter': {'features': ["population"], 'upper_qurant_percent': 0.969,
+                    'lower_qurant_percent': 0}}
+
+
+
+def _samples_to_remove(isUpperValue, housing,feature, inner_dict):
+    series_ = housing[feature]
+    if isUpperValue:
+        qurantile_value = series_.quantile(inner_dict['upper_qurant_percent'])
+        return housing[housing[feature] > qurantile_value]
+    else:
+        qurantile_value = series_.quantile(inner_dict['lower_qurant_percent'])
+        return housing[housing[feature] < qurantile_value]
+
+
+class OutlinerRemover():
+    def transform(self, housing, y=None):
+        df_empty = pd.DataFrame()
+        for inner_dict in CLEAN_OUTLIERS_DICT.values():
+            for feature in inner_dict['features']:
+                low_filtered_samples =_samples_to_remove(False, housing, feature, inner_dict)
+                high_filtered_samples = _samples_to_remove(True, housing,
+                                                          feature, inner_dict)
+                df_empty = df_empty.append(low_filtered_samples)
+                df_empty = df_empty.append(high_filtered_samples)
+        housing_clean = pd.concat([housing, df_empty, df_empty]).drop_duplicates(
+                        keep=False)
+        return housing_clean
+
 
 
 class AttributesRemover(BaseEstimator, TransformerMixin):

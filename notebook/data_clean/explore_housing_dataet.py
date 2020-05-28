@@ -23,7 +23,7 @@ housing["ocean_proximity"].value_counts()
 # first look on the numerical feilds values:
 
 describe_table = housing.describe()
-
+describe_table.T.to_csv('train_set_stats', index=True)
 
 #histograms of the different features
 import matplotlib.pyplot as plt
@@ -51,23 +51,63 @@ def drop_numerical_outliers(df, z_thresh=3):
     constrains = df.select_dtypes(include=[np.number]) \
         .apply(lambda x: np.abs(stats.zscore(x)) < z_thresh, reduce=False) \
         .all(axis=1)
+    z_thresh  = 2
+    df = housing
+    constrains = df[["total_rooms", "total_bedrooms", "population", "households" ]] \
+        .apply(lambda x: np.abs(stats.zscore(x)) < z_thresh) \
+        .all(axis=1)
+
+    constrains.value_counts()
     # Drop (inplace) values set to be rejected
     df.drop(df.index[~constrains], inplace=True)
 
 def evaluate_features_outliers(housing):
-    rooms = housing["total_rooms"]
-    housing["rooms_z_score"] = stats.zscore(rooms)
-    a = housing[["total_rooms", "rooms_z_score"]]
-    a = a.sort_values(by ='total_rooms' )
+    features_to_hard_filter = ["total_rooms", "total_bedrooms", "households" , "population"]
+    features_to_med_filter = ["households"]
+    features_to_easy_filter = ["population"]
 
-    rooms.quantile(.0025)
-    x = rooms[~rooms.between(rooms.quantile(.05), rooms.quantile(.99))]  # without outliers
+    CLEAN_OUTLIERS_DICT = {'hard_filter': {'features': ["total_rooms", "total_bedrooms"], 'upper_qurant_percent' : 0.95, 'lower_qurant_percent': 0 },
+                           'med_filter': {'features': ["households"], 'upper_qurant_percent' : 0.97, 'lower_qurant_percent': 0 },
+                           'easy_filter': {'features': ["population"],'upper_qurant_percent': 0.97, 'lower_qurant_percent': 0 } }
 
+    CLEAN_OUTLIERS_DICT = {'hard_filter': {'features': ["total_rooms", "total_bedrooms"], 'upper_qurant_percent' : 0.975, 'lower_qurant_percent': 0 },
+                           'med_filter': {'features': ["households"], 'upper_qurant_percent' : 0.9733, 'lower_qurant_percent': 0 },
+                           'easy_filter': {'features': ["population"],'upper_qurant_percent': 0.969, 'lower_qurant_percent': 0 } }
 
-    #function to automatlicly clean outliers from numerica col, based on z_threshold.:
-    #drop_numerical_outliers(housing)
+    import pandas as pd
+    df_empty = pd.DataFrame()
+    for inner_dict in CLEAN_OUTLIERS_DICT.values():
+        for feature in inner_dict['features']:
+            series_ = housing[feature]
+            qurantile_value_bottom = series_.quantile(inner_dict['lower_qurant_percent'])
+            qurantile_value_upper = series_.quantile(inner_dict['upper_qurant_percent'])
+            low_filtered_samples = housing[housing[feature] < qurantile_value_bottom]
+           # df_empty = df_empty.append(low_filtered_samples)
+            high_filtered_samples = housing[housing[feature] > qurantile_value_upper]
+            df_empty = df_empty.append(high_filtered_samples)
 
-    # we will examine
+    hosung_clean = pd.concat([housing, df_empty, df_empty]).drop_duplicates(
+        keep=False)
+
+    import matplotlib.pyplot as plt
+    hosung_clean[["total_rooms", "total_bedrooms", "households" , "population"]].hist(bins=100, figsize=(8, 4))
+    plt.show()
+
+    import matplotlib.pyplot as plt
+    housing[["housing_median_age", "median_house_value"]].hist(bins=50, figsize=(8, 4))
+    plt.show()
+    bb = housing['housing_median_age'].value_counts().sort_values(ascending=False)
+        print(bb.nlargest(10))
+
+import matplotlib.pyplot as plt
+housing2[["housing_median_age"]].hist(bins=50, figsize=(6, 4))
+plt.show()
+    df_to_remove = pd.DataFrame()
+    to_remove_samples = housing[housing["median_house_value"] == 500001.0]
+    df_to_remove = df_to_remove.append(to_remove_samples)
+
+    to_remove_samples2 = housing[housing["housing_median_age"] == 52.0]
+    df_to_remove = df_to_remove.append(to_remove_samples2)
 
 
 def explore_top_values(housing):

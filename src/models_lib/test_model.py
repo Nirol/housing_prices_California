@@ -1,4 +1,4 @@
-from sklearn.ensemble import RandomForestRegressor
+from sklearn.ensemble import RandomForestRegressor, ExtraTreesRegressor
 from sklearn.metrics import mean_squared_error
 import numpy as np
 
@@ -25,8 +25,9 @@ def test_model(housing_train_x, housing_train_y, test_set):
     # or re-fit an estimator with the desirable parameters
    # estimator = __load_from_pickle()
 
-    estimaor =     RandomForestRegressor(bootstrap=True, max_features=6,  n_estimators=30)
-    estimaor.fit(housing_train_x, housing_train_y)
+    estimaor =     ExtraTreesRegressor(max_depth=20, max_features=6, n_estimators=600)
+    estimaor.fit(housing, housing_labels)
+
     X_test = test_set.drop("median_house_value", axis=1)
     y_test = test_set["median_house_value"].copy()
     X_test_prepared = pipeline_transform_features(X_test)
@@ -43,4 +44,4 @@ def test_model(housing_train_x, housing_train_y, test_set):
     final_rmse = np.sqrt(final_mse)
     print(final_rmse)
 
-    explore_test_error(X_test, y_test, final_predictions)
+    explore_test_error(X_test_prepared, y_test, final_predictions)

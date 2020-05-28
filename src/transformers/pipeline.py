@@ -9,7 +9,7 @@ import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 
 from src.transformers.transformers import CombinedAttributesAdder, \
-    AttributesRemover
+    AttributesRemover, OutlinerRemover, CappedValuesRemover
 
 
 class DataFrameSelector(BaseEstimator, TransformerMixin):
@@ -29,13 +29,13 @@ class SupervisionFriendlyLabelBinarizer(LabelBinarizer):
 
 
 #To remove features,  fill names and indx in the next 4 variables:
-CAT_FEATURES_TO_REMOVE =  ['<1H OCEAN', 'ISLAND', 'NEAR BAY', 'INLAND']
-NUM_FEATURES_TO_REMOVE =  ['total_rooms', 'population', 'total_bedrooms',
-                         'households']
-NUM_FEATURES_TO_REMOVE_idx = [3, 4, 5, 6]
+CAT_FEATURES_TO_REMOVE = [] # ['<1H OCEAN', 'ISLAND', 'NEAR BAY', 'INLAND']
+NUM_FEATURES_TO_REMOVE = [] # ['total_rooms', 'population', 'total_bedrooms',
+                        # 'households']
+NUM_FEATURES_TO_REMOVE_idx = [] #[3, 4, 5, 6]
 
 # nearby ocean feature is last (5) so remove the first 4:
-CAT_FEATURES_TO_REMOVE_idx =   [0, 1, 2, 3]
+CAT_FEATURES_TO_REMOVE_idx =   [] # [0, 1, 2, 3]
 
 
 def pipeline_transform_features(housing):
@@ -44,14 +44,17 @@ def pipeline_transform_features(housing):
     cat_attribs = ["ocean_proximity"]
     combined_attr_adder = CombinedAttributesAdder(True)
 
+
+
+
     num_pipeline = Pipeline([
         # we need all num attributes  for combination
         ('selector', DataFrameSelector(num_attribs)),
         ('imputer', SimpleImputer(missing_values=np.nan, strategy='median')),
         ('attribs_adder', combined_attr_adder),
         # after adding the new combination features, remove the unused one before standartization
-        ('attribs_remover', AttributesRemover(NUM_FEATURES_TO_REMOVE_idx)),
-        s
+      #  ('attribs_remover', AttributesRemover(NUM_FEATURES_TO_REMOVE_idx)),
+
         #('std_scaler', RobustScaler()),
     ])
 
@@ -68,8 +71,19 @@ def pipeline_transform_features(housing):
 
     ])
 
-    housing_prepared = full_pipeline.fit_transform(housing)
+    # cleaning rows transformers are not supported by sktlearn yet
 
+
+    # using outliers\ capped values remover before the pipeline:
+    capped_remover_transformer = CappedValuesRemover('housing_median_age')
+    housing_cleaned= capped_remover_transformer.transform(housing)
+    housing_cleaned.reset_index(drop=True, inplace=True)
+
+
+    #the pipeline
+    housing_prepared = full_pipeline.fit_transform(housing_cleaned)
+
+    # from np array to dataframe with feature column names
     def __from_array_to_df():
         all_cat_colummns = list(housing["ocean_proximity"].unique())
         cat_cols_left = [item for item in all_cat_colummns if
