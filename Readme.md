@@ -607,7 +607,7 @@ The dataset feature histogram after the removal of capped house_median_value:
   
 
 *  Removal of the top 2.5% - 3% quantile for this 4 features cleaned the histograms:
-    *   ![Features Histogram](data/pics/histo_clean_outliers_household_pop_rooms.png)
+    *   ![Features Histogram](data/pics/not_used/histo_clean_outliers_household_pop_rooms.png)
     * Total of 656 outliers districts were removed during this process.
 
 
