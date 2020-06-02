@@ -4,7 +4,7 @@ import numpy as np
 
 from notebook.test_error_exploration.explore_test_error import \
     explore_test_error
-from src.transformers.pipeline import pipeline_transform_features
+from src.transformers.mid_pipeline import pipeline_transform_features
 
 
 def __load_from_pickle():
@@ -19,29 +19,27 @@ def __load_from_pickle():
 
 
 
-def test_model(housing_train_x, housing_train_y, test_set):
+def test_model(train_set_X, train_set_Y, test_set_X, test_set_Y):
 
     # either load an estimator from the grid search best estimator that was saved to pickle
     # or re-fit an estimator with the desirable parameters
    # estimator = __load_from_pickle()
 
-    estimaor =     ExtraTreesRegressor(max_depth=20, max_features=6, n_estimators=600)
-    estimaor.fit(housing, housing_labels)
-
-    X_test = test_set.drop("median_house_value", axis=1)
-    y_test = test_set["median_house_value"].copy()
-    X_test_prepared = pipeline_transform_features(X_test)
-    final_predictions = estimaor.predict(X_test_prepared)
+    estimaor = RandomForestRegressor(bootstrap=False, max_depth=70, max_features=6,
+                        min_samples_leaf=1, min_samples_split=2,
+                        n_estimators=600)
 
 
 
 
+    estimaor.fit(train_set_X, train_set_Y)
 
 
 
+    final_predictions = estimaor.predict(test_set_X)
 
-    final_mse = mean_squared_error(y_test, final_predictions)
+    final_mse = mean_squared_error(test_set_Y, final_predictions)
     final_rmse = np.sqrt(final_mse)
     print(final_rmse)
 
-    explore_test_error(X_test_prepared, y_test, final_predictions)
+    #explore_test_error(X_test_prepared, y_test, final_predictions)

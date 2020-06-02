@@ -195,8 +195,8 @@ def initial_model_try(housing_transformed, housing_labels):
     print("3. RandomForestRegressor")
     from sklearn.ensemble import RandomForestRegressor
     forest_reg = RandomForestRegressor()
-    forest_reg.fit(housing_transformed, housing_labels)
-    models_dict["RandomForestRegressor"] = test_model_on_trainning_set_cv(housing_transformed, housing_labels, forest_reg, "RandomForestRegressor")
+    forest_reg.fit(train_set_X, train_set_Y)
+    models_dict["RandomForestRegressor"] = test_model_on_trainning_set_cv(train_set_X, train_set_Y, forest_reg, "RandomForestRegressor")
     models_dict["RandomForestRegressor"].set_feature_importance(col_list)
     print(forest_reg.feature_importances_)
 
@@ -209,8 +209,8 @@ def initial_model_try(housing_transformed, housing_labels):
     from sklearn.ensemble import ExtraTreesRegressor
 
     etr = ExtraTreesRegressor(n_estimators=100, random_state=0)
-    etr.fit(housing_transformed, housing_labels)
-    models_dict["etr"] = test_model_on_trainning_set_cv(housing_transformed,housing_labels, etr, "etr")
+    etr.fit(train_set_X, train_set_Y)
+    models_dict["etr"] = test_model_on_trainning_set_cv(train_set_X,train_set_Y, etr, "etr")
 
 
 
@@ -222,10 +222,40 @@ def initial_model_try(housing_transformed, housing_labels):
 
     print("18 GradientBoostingRegressor")
     gbr = GradientBoostingRegressor(random_state=1)
-    gbr.fit(housing_transformed, housing_labels)
-    models_dict["gbr"] = test_model_on_trainning_set_cv(housing_transformed,housing_labels, gbr, "gbr")
+    gbr.fit(train_set_X, train_set_Y)
+    models_dict["gbr"] = test_model_on_trainning_set_cv(train_set_X,train_set_Y, gbr, "gbr")
 
 
 
 
 
+def initial_model_test(train_set_X, train_set_Y ):
+
+    models_dict = {}
+    col_list = list(train_set_X.columns)
+
+
+    # print("3. RandomForestRegressor")
+    # from sklearn.ensemble import RandomForestRegressor
+    # forest_reg = RandomForestRegressor()
+    # forest_reg.fit(train_set_X, train_set_Y)
+    # models_dict["RandomForestRegressor"] = test_model_on_trainning_set_cv(train_set_X, train_set_Y, forest_reg, "RandomForestRegressor")
+    # models_dict["RandomForestRegressor"].set_feature_importance(col_list)
+    # print(forest_reg.feature_importances_)
+
+
+    # print("16 ExtraTreesRegressor")
+    # from sklearn.ensemble import ExtraTreesRegressor
+    #
+    # etr = ExtraTreesRegressor(n_estimators=100, random_state=0)
+    # etr.fit(train_set_X, train_set_Y)
+    # models_dict["etr"] = test_model_on_trainning_set_cv(train_set_X,train_set_Y, etr, "etr")
+
+
+    print("18 GradientBoostingRegressor")
+    gbr = GradientBoostingRegressor(random_state=1)
+    gbr.fit(train_set_X, train_set_Y)
+    models_dict["gbr"] = test_model_on_trainning_set_cv(train_set_X,train_set_Y, gbr, "gbr")
+
+    for key in models_dict:
+        print(models_dict[key])

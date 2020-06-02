@@ -8,12 +8,6 @@ def random_split_train_test(data, test_ratio):
  train_indices = shuffled_indices[test_set_size:]
  return data.iloc[train_indices], data.iloc[test_indices]
 
-#implmentation of basic split train/ test by sklearn
-#from sklearn.model_selection import train_test_split
-#train_set, test_set = train_test_split(housing, test_size=0.2, random_state=42)
-
-
-# spliting train and test by id in cause we update the dataset and want to keep the seperation between train/test samples as it was on the old data version:
 
 import hashlib
 def test_set_check(identifier, test_ratio, hash):

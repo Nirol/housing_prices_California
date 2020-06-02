@@ -53,7 +53,8 @@ Each record (row) in the dataset represent a district in California and hold the
     
 
 As a first step, we will examine each of the features separately, looking for   
-outliers, errors, and missing values.
+outliers, errors, and missing values.  
+![Variables over the last five elections](data/pics/data_exploration/dataset_v1_describe_stat.PNG)  
 
 * Total of 20640 samples in the dataset, only the total bedrooms feature has   
 missing values (added artificially).
@@ -61,39 +62,21 @@ missing values (added artificially).
 * Longitude, latitude and house median age all contained in relative small value  
  range, without abnormal values and with relatively small variance.
  
-* total rooms toegether with population and households 
-![Variables over the last five elections](data/pics/train_set_stats.PNG)
+* total_rooms, total_bedrooms, population, and households all have high variance.  
+ notably, the 75% percentile is significantly lower compared to the maximum value  
+ in all four feature, I will delve into this matter later on.
 
-
-
-Moving forward to the number of households, we detect a few irregularities:
-* A mean of 499.54 with high std of 382.32.
-  * A minimum value of a single household per district and a maximum of 6082.  
-  Districts with such a small number of households appear irregular.
-  * In a real-life situation, I would consult with the client\ domain expert team  
-   regarding these cases.  
-   In this solo project, I decided to experiment with both removing and keeping  
-    these districts as part of the analysis.
-  * The bottom 0.25% of districts hold a total number of  < 47.6 households,   
-     that would be a moderate spot to initiate samples cut-offs.
-     
-* A glance over other features values on these districts, we can easily examine  
-   that population, total bedrooms and total rooms showcasing very small values  
-    as well, suggesting a high correlation between these variables groups and a   
-    potential feature reduction on later phases of the analysis.
+    * On the other end of this 4 features statistics, we spot the same difference  
+between the minimum value to the 25% percentile value. 
+         
+    * Looking on the data table itself, it is easily spotted that this four features  
+     are highly correlated and a potential feature reduction on later phases   
+     of the analysis might be possible.
     
-* A few districts posses a significantly higher number of households/total rooms/  etc.
-  *  example like 47.6
-  * In a real-life situation, I would consult with the client\ domain expert team,
-   I decided to try both removing and keep these districts.
-
-
-
-* The correction \ removal of outliers will be  made onn a later stage.
 
 ### Features Histograms
 
-![Features Histogram](data/pics/data_explore_histograms.PNG)
+![Features Histogram](data/pics/data_exploration/data_explore_histograms.PNG)
 
 * Sticking out, The median house age and the median house value (target feature)   
 values were capped at 50 and 500000 respectively.
@@ -127,7 +110,7 @@ The reason is we cannot proceed with pattern recognition, outliers cleaning, and
  
 ### Correlation
 
-![Corr_Table](data/pics/corr.PNG)
+![Corr_Table](data/pics/data_exploration/corr.PNG)
 
 * The subgroup of total_rooms, total_bedroom, population and household is very  
  correlated to each other, making most of those features a serious candidate
@@ -135,7 +118,7 @@ The reason is we cannot proceed with pattern recognition, outliers cleaning, and
 * The Median income is the only feature heavily correlated by itself to the target  
  variable (median house value), the scatter plot of the correlation of this variable.
  
-  ![Corr_scatter](data/pics/corr_scatter.PNG)
+  ![Corr_scatter](data/pics/data_exploration/corr_scatter.PNG)
   
 *  The strong correlation is indeed visible on the scatter plot.
 * The house value cap is also very prominent on this plot.
@@ -180,7 +163,7 @@ create bedrooms_per_room, a potentially more telling feature.
 
  
 The corrleation of the newly created features between themselvs and the target house price feature:
-   ![Corr_scatter](data/pics/corr_new.PNG)
+   ![Corr_scatter](data/pics/data_exploration/corr_new_features.PNG)
  
 A not nearly as high correlation between the newly created features  as in between  
  the original features, while correlating much better to the target!.
@@ -210,7 +193,7 @@ Might check normlization later on if I end up cutting off most of the outliers d
 ### The Current Data Transformation Pipeline & DataSet
 
 **At this point the data transformation pipeline consist of:**  
-     ![pipeline_v1](data/pics/pipeline_V1.PNG)
+     ![pipeline_v1](data/pics/meta_pipeline/pipeline_V1.PNG)
 
 **The current final training dataset contains 16 total columns:**
 * The original features described at the start of Data Exploration, minus
@@ -226,7 +209,7 @@ Up until this point I **did not** test the following options:
 
 ### Models Chosen For Initial Testing
 Based on scikit learn ml map:
-   ![ml_map](data/pics/ml_map.PNG)
+   ![ml_map](data/pics/meta_pipeline/Ml_map.PNG)
  
 * I Added both Lasso and ElasticNet models to the initial testing.  
  Both of the models works well for the sparse dataset ( which is partially our  
@@ -275,7 +258,7 @@ Moreover, the model output consists of a boolean mask classifying each sample as
 ### Initial Results
 Models were tested using 10-fold cross validation on the train data set.
 
-![Initial results](data/pics/initial_regressor_error.PNG)
+![Initial results](data/pics/initial_model_test/initial_regressor_error.PNG)
 
 * Expected ExtraTreesReg is less variant than the random forest but with  
   slightly higher error.
@@ -301,7 +284,7 @@ param_grid = [
     ]
  ```
 **The top performers of the basic grid parameter search are:**  
-  ![Initial results](data/pics/RandomForestRegressor.PNG)
+  ![Initial results](data/pics/fine_tun/RandomForestRegressor_v1.PNG)
   
  
 * The error was reduced from 50196 to 48493.
@@ -322,8 +305,8 @@ Before jumping into conclusions, lets re run the gridsearch with higher estimato
  ```
 
 
-**The top performers of the  basic grid parameter search are:**
-![Initial results](data/pics/RandomForestRegressor2.PNG)
+**The top performers of the  basic grid parameter search are:**  
+![Initial results](data/pics/fine_tun/RandomForestRegressor_v1.1.PNG)
     
 * Elevating the numbers of estimators did manage to slightly improve the results.
 * Maximum features per tree split will be set to 6 parameters.
@@ -361,7 +344,7 @@ I thoroughly tested the first two options versus the  different initial models
 ## Feature Selection
 **Feature importance from the best performing RandomForestRegressor estimator:**
 
-![Initial results](data/pics/feature_importance1.PNG) 
+![Initial results](data/pics/feature_importance/feature_importance_v1.PNG) 
     
  * In yellow, the highly correlated original group of features, the source for  
   the Attribute Combinations step. These four features turn out to be of very  
@@ -380,15 +363,13 @@ to be relatively important.
 * Sames goes with the fine tuned RandomForestRegressor predictor, results were  
  slightly worse during the tunning and on the test set.
  
- 
-
-
+  
  ## Handling Outliers and Capped Features Labels
  
  ### Capped Target House Median Value
- As explained in the data exploration section The feature house_median_age and
+ As explained in the data exploration section The feature house_median_age and  
   the **prediction target** median_house_value values are capped.  
- ![statistics_test](data/pics/capped_house_median_value.png)   
+ ![statistics_test](data/pics/capped_values/capped_house_median_value.png)   
    
   * Another way to view the capped target variable values:  
     Top occurring median_house_value values:
@@ -413,7 +394,7 @@ district into 19675.
 
 
 ### Initial Model Testing Version 2
-   ![ml_map](data/pics/initial_regressor_error_V2.PNG)
+   ![ml_map](data/pics/feature_importance/initial_regressor_error_V2.PNG)
 
 * Most of the models mean error reduced by a very large margin.
 * K-NN preforms much worse after the removal of the capped target samples
@@ -427,19 +408,53 @@ be removed.**
 
 #### Fine Tuning Top Models Version 2   
 
-  TODO: test against test set after removign capped target ONLY!!
-    
+
+
+##### <ins>RandomForestRegressor</ins>
+
+Simple RandomForestRegressor tuning result in the best estimator to be: 
+![RandomForestRegFineTun_V2](data/pics/fine_tun/RandomForestRegressor_v2.PNG)   
+
+
+**The Best RandomForestRegressor Estimator error on the test set is 42305.31**
+
+
+
+
+##### <ins>ExtraTreeRegressor</ins>
+Simple ExtraTreeRegressor tuning result in the best estimator to be:  
+(Note here: Fine tunning of version 3 was conducted before version 2, that why    
+this ExtraTreeRegressor fine tuning did not include a lot of options )  
+   ![ExtraTreeRegressor_V2](data/pics/fine_tun/ExtraTreeRegressor_V2.PNG)   
+
+First time I tried max_feature = 7 and its top the performance table, same with  
+min_samples_split=3. I will try this combinations later on future versions.
+
+**The best ExtraTreeRegressor estimator feature importance:**  
+   ![FeatureImportance_V2](data/pics/feature_importance/extra_tree_regressor_feature_importance_v2.PNG)   
+
+**The Best ExtraTreeRegressor best estimator error on the test set is 43665.19863641184**
+
+That is a really big improvement on the test set for ExtraTreeRegressor.
+
+   
+   
+
+
+  
+  
+  
   
   
   
  ### Capped Feature House Median Age
  
-  ![statistics_test](data/pics/capped_house_median_age.png)   
+  ![statistics_test](data/pics/capped_values/capped_house_median_age.png)   
 
 A total of 1103 districts with capped median_house_age left after the removal of  
 the capped target feature. 
  
-Since median_house_age is not the target label, we remove capped values only from  
+Since median_house_age is not the target label, I remove capped values only from  
 the train set only. Overall 895 district were removed from the training set  
 Reducing it from 15740 to 14845.
 
@@ -449,18 +464,18 @@ Reducing it from 15740 to 14845.
 Testing the top 3 models after the removal of capped median_house_age districts  
 produced even lower error on the train set: 
 
-   ![ml_map](data/pics/initial_regressor_error_V3.PNG)  
+   ![ml_map](data/pics/initial_model_test/initial_regressor_error_V3.PNG)  
    
 I will test the performance on the test set before the final decision to remove
 the capped median age values or not.
  
  
-#### Fine Tuning Top Models Version 3
+#### <ins>Fine Tuning Top Models Version 3</ins>
 
 At this stage after a significant improvement on the train set  
 I want to find the best parameters before predicting the test set.
 
-#### RandomForestRegressor Fine Tuning
+#### <ins>RandomForestRegressor Fine Tuning</ins>
 
 A basic grid parameter search based on the earlier grid search best results:  
  ```python
@@ -480,16 +495,16 @@ RandomForestRegressor(bootstrap=False, max_depth=20, max_features=6,
  ```
 
 
-An improvement over ~48K error on the last random forest fine tuning.  
+
 
 Feature importance of the best estimator:    
  ![statistics_test](data/pics/feature_importance/feature_importance_v2.PNG) 
  
-Almost the same feature importance results as before, now only 7 features that  
- are significantly less importance, especially the bottom two features.  
- I will test the removal the bottom 7 and the bottom 2 features.
+
  
- #### ExtraTreeRegressor Fine Tuning
+ **The Best RandomForestRegressor Estimator error on the test set is 42708.52**
+ 
+ #### <ins>ExtraTreeRegressor Fine Tuning</ins>
  
  It is time to start fine tuning the other top 2 models as well,  
  starting from the ExtraTreeRegressor. As in the random forest models, the most  
@@ -514,13 +529,41 @@ Feature importance by the best ExtraTreeRegressor estimator:
    
 Very similar to the random forest estimator feature importance. 
  
+**The Best ExtraTreeRegressor Estimator error on the test set is 49005.977**
  
  
  
  
- ## Removing Outliers
+## Capped Values Handling Conclusion
  
- ### Examine Test Set Error V1
+I tested the removal of the two different capped features:  
+
+#### House Median Value
+
+* The model target house_median_value was capped at 500001.0, meaning any district  
+ with higher houses median value was set to 500001.0.  
+  This very biased dataset that would mislead predictors to conclude the target  
+   value never pass 500001.0.
+* Removing districts with the capped target value reduced the error on the test  
+  set significantly in both tested models.
+* It is important to note the model did have any district samples with higher   
+house median value to learn from, and will probably preform bad on them.
+  
+#### House Median Age  
+
+* The house median age was also capped at 52.0, meaning any district with higher  
+median houses age was set to 52.0.
+* The phenomenon is on a much smaller scale, most districts houses median age   
+  are not over 50 years old (would of consult a domain expert about this issue).
+* Removing the capped values from the training set had an insignificant impact  
+on the test set error.
+* I decided to keep the capped districts in the dataset.
+  
+  
+  
+ ## Handling Outliers
+ 
+ ### Examine Test Set Error V2
  
  explore_test_error script allow us to look on the error of each of the districts
  on the test set.
@@ -528,45 +571,165 @@ Very similar to the random forest estimator feature importance.
  Comparing the statistics of the worst 250 district by error compare to the complete
  test dataset:
  
- ![statistics_test](data/pics/compare_test_sets.PNG) 
+ ![statistics_test](data/pics/compare_test_sets.PNg) 
   
- * total_rooms, households: district with lower values are ovrly represented at
-  the top 250 worst.
- * Higher median income in the top 250.
- * ISLANDS tagged district are more represtned in the top 250 error.
- * The actual label, median price value, of the top 250 dataset is much higher than the whole test dataset.
+ In orange, values that are lower in worst 250 districts by error on the test set.  
+ In blue, values that are higher.  
+ * The four original grouped features (total_rooms to households) hold lower values  
+  in the worst 250 districts dataset.    
+ * On the contrary, median_income, rooms_per_household, together with the actual  
+  real district house median value are higher on the worst 250 erroneous districts.  
+    * As I concluded on the last section, the model will handle high house value  
+    districts poorly since it lacks training samples.
+   * The ISLANDS tagged district are less represented in the worst 250 districts.
+
  
  ### HuberRegressor Outliers Statistics
  
- One of the HuberRegressor model main features is the classification of each  
-  sample as outlier or not.  
- Running the model on the complete dataset classified 7513 districts as outliers  
-  out of the full 20640 dataets.  
-  The model deafult parameters returned a very loosen outliers classification,
-  tunning the epslion parameter to 2.5 resulted in only 872 outliers classified.
-    
- Looking at the statistics of the districts classifed as outliers:
-  ![stats_otlier](data/pics/HuberRegressor_outliers_stats.PNG) 
-  
-  * Total rooms and total bedrooms, and household values are even lower than worst 250 samples.
-  * Median income higher than the overall test group median income.
+ One of the HuberRegressor model main features is the classification of each    
+  sample as outlier or not.   
+  The model default parameters returned a very loosen outliers classification,  
+  tuning the epslion parameter to 2.5 resulted in only 872 outliers classified.
+
+* The statistics of HuberRegressor set were in agreement with the worst 250 districts    
+ I presented earlier.   
   
   
- ### Removing Extreme Values Outliers
+ ### Removing Extreme High Values Outliers
  
- At the feature exploration sub-section we viewed the complete dataset histograms:
- ![Features Histogram](data/pics/data_explore_histograms.PNG)
+The dataset feature histogram after the removal of capped house_median_value:  
+ ![Features Histogram](data/pics/data_exploration/data_explore_histograms_v2_vapped.PNG)
  
- * The features: households, population, total_bedroom, and total_room:
-   * X axis is extended up to 5  fold due to individuals districts.
-   *  Removal of the top 0.025 - 0.03 quantile for this 4 features cleaned the histograms:
-   *   ![Features Histogram](data/pics/histo_clean_outliers_household_pop_rooms.png)
-   * Total of 866 outliers removed.
+* The features: **households, population, total_bedroom, and total_room**:
+   * X axis is extended up to 5  fold due to individuals districts, for example  
+   the total_rooms feature range sprea between 2 to 39320 with only 77 samples   
+    above 16k or 249 districts above 10k (out of 20640 districts).  
+  
+
+*  Removal of the top 2.5% - 3% quantile for this 4 features cleaned the histograms:
+    *   ![Features Histogram](data/pics/histo_clean_outliers_household_pop_rooms.png)
+    * Total of 656 outliers districts were removed during this process.
+
+
+* I tested the performance versus the training set using the top 3 models and   
+against the test set, the error is slightly worse than version 2 described   
+earlier where I didn't remove any of the districts.
+
+
+### Log Transforming Extreme Values Outliers
+
+I tested sklearn PowerTransformer to handle this four feature outliers.  
+PowerTransformer estimated the optimal parameter for stabilizing variance  
+and minimizing skewness through maximum likelihood.      
+   
+ **Performing log transformation on the four features did not result in performance  
+ improvement vs the training set nor versus the test set.**
  
 
- 
- 
- 
+   
+   
+### Combining The Two Options
+
   
+  **The removal of extreme high value outliers together with PowerTransform the other   
+  four features resulted in promising results without fine tuning the estimator yet:**  
+  
+ ![initial_models_test_v2_removal_outliers_powertransformer](data/pics/initial_model_test/v2_removal_outliers_only.PNG)
+   
+   
+  The general best random forest estimator from earlier tuning had 42562.75 error  
+  on the test set.  
+  
+  #### RandomForest Fine Tuning
+  Based on all earlier random forest fine tuning I have an idea for the ideal   
+  values for most of the parameters, ( such as boostrap, number of estimators)  
+  There still few parameters left to optimize:  
+   
+   ```python
+    param_grid = [
+        {'bootstrap': [False], 'n_estimators': [600],
+         'max_features': [5, 6, 10], 'min_samples_split': [2, 3, 4],
+         'min_samples_leaf': [1],
+         'max_depth': [20, 35]
+         },
+    ]
+  ```
+ ![fine_tun](data/pics/fine_tun/random_forest_v2_cut_outliers_powertranform.PNG)
+   
+**The Best estimator result on the test set is 42588**
+
+**The training set fine tunning error and the best estimator error versus  
+the test set are all worse than Version 2 erorr (were no district removal  
+nor feature transformation were used)**
+
+
+### Removing Extreme Low Values Outliers
+
+* In the begining of this section I compared the statistics of the full test   
+dataset and the bottom 250 error districts from the test dataset.    
+  
+* The four features in the question had lower mean values, suggesting testing  
+for the removal of extreme low value outliers.  
+  
+* Another argument for the removal of low value outliers comes from a domain  
+ knowledge perspective. Districts with 1, 2, or even 20 houses should not be   
+ evaluated as a district (e.g calculating district median features values).  
+   
  
+ * In case a domain expert agrees with my last assessments we can remove  
+ extremely small districts from the whole dataset, since we are not interested  
+ in evaluating such small districts as part of the analysis.   
+
+* Removing districts that are bottom 4.5%  of **households, population, total_bedroom,  
+and total_room**:
+     * total rooms < 665.
+     * total bedrooms < 146.
+     * households < 135.
+     * population <371.64.  
+     
+   * (High numbers of the districts are shared between the cuts)  
+
+**The last best estimator mean error on this data test is 40100.55, much lower than   
+our currently estimator without fine tuning!**
+
+
+ A deeper evaluation shows that cutting districts based on all four features is  
+redundant. Cutting off districts based on either population or households is enough.  
+  
+Cutting only 4.5% (1093 districts) of the bottom population instead of 1490 districts  \
+resulted in the same mean error over the test set.  
+
+#### Fine Tuning RandomForest
+
+Best estimator with mean error 40194.36 was:    
+                                           
+   ```python
+ RandomForestRegressor(bootstrap=False, max_depth=70, max_features=6,
+                                           min_samples_leaf=1, min_samples_split=2,  
+                                           n_estimators=600)  
+  ```
+
+ ![Feature_importance](data/pics/feature_importance/random_forest_v2_cut_capped_low_outliers.PNG)
+
+
+### Feature Scaling & Removal
+
+#### Feature Removal
+After the latest updates to our model (The removal of capped target feature  
+values together with extreme small districts). I decided to test once again  
+for different options of feature scaling and reductions.
  
+Based on our latest best RandomForest estimator feature importance output  
+I tested for the removal of bottom 3 and bottom 8 features.  Result show major  
+decrease in estimator performance over the training set and the test set.
+
+#### Feature Scaling
+
+I tested the use of PowerTransformer for the group of features with large right-side   
+tails and the use of StandardScaler for the others features that do not require
+log transformation.  
+
+Since our top 2 best estimator is RandomForestRegressor, feature scaling is not  
+necessary and don't contribute for better results.
+Moreover, scaling of the feature smooth the non linear realtionships between  
+the different features that.

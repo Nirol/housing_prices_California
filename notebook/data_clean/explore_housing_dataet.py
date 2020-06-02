@@ -1,58 +1,58 @@
+
 from data.get_data_helper import load_housing_data
-
-housing = load_housing_data()
-
-housing.head()
+import pandas as pd
+def first_glance_over_dataset():
 
 
-housing.info()
+    housing = load_housing_data()
 
-#  Notice that the total_bed
-# rooms attribute has only 20,433 non-null values, meaning that 207 districts are
-# missing this feature. We will need to take care of this later
+    housing.head()
 
 
-# ocean_proximity  is the only text value feature, the rest are numerical
-#lets explore the possible values for ocean_proximity:
+    housing.info()
 
-housing["ocean_proximity"].value_counts()
-
-# we confirmed those are categorial feature with only 5 possible text values overall
-
-
-# first look on the numerical feilds values:
-
-describe_table = housing.describe()
-describe_table.T.to_csv('train_set_stats', index=True)
-
-#histograms of the different features
-import matplotlib.pyplot as plt
-housing.hist(bins=50, figsize=(20,15))
-plt.show()
+    #  Notice that the total_bed
+    # rooms attribute has only 20,433 non-null values, meaning that 207 districts are
+    # missing this feature. We will need to take care of this later
 
 
-# we can evaluate that:
-# income values were transformed to 0 - 15 instead of original usd salaries  ( it turns out to be in 10k usd units )
-# house median age and income were capped at a certain value, the house value is our predictor target so this might be a proelem
-# if it is acceptable for the price prediction to be capped at 500k as well we are fine,
-# else, we need to remove the capped house price value samples and hopefully get new labeled samples with price value above the cap.
+    # ocean_proximity  is the only text value feature, the rest are numerical
+    #lets explore the possible values for ocean_proximity:
+
+    housing["ocean_proximity"].value_counts()
+
+    # we confirmed those are categorial feature with only 5 possible text values overall
 
 
-# more generally regarding all features:
-#TODO handle later on
-# Each features scale differently  -> to be handeled in feature scaling
-#  skew // tail heavy histograms for most features  - detailed on the README file
+    # first look on the numerical feilds values:
+
+    describe_table = housing.describe()
+    describe_table.T.to_csv('train_set_stats', index=True)
+
+    #histograms of the different features
+    import matplotlib.pyplot as plt
+    housing.hist(bins=50, figsize=(15,10))
+    plt.show()
+
+
+    # we can evaluate that:
+    # income values were transformed to 0 - 15 instead of original usd salaries  ( it turns out to be in 10k usd units )
+    # house median age and income were capped at a certain value, the house value is our predictor target so this might be a proelem
+    # if it is acceptable for the price prediction to be capped at 500k as well we are fine,
+    # else, we need to remove the capped house price value samples and hopefully get new labeled samples with price value above the cap.
+
+
 
 
 from scipy import stats
 import numpy as np
-def drop_numerical_outliers(df, z_thresh=3):
+def drop_numerical_outliers(df: pd.DataFrame, z_thresh: int =3):
     # Constrains will contain `True` or `False` depending on if it is a value below the threshold.
     constrains = df.select_dtypes(include=[np.number]) \
         .apply(lambda x: np.abs(stats.zscore(x)) < z_thresh, reduce=False) \
         .all(axis=1)
     z_thresh  = 2
-    df = housing
+
     constrains = df[["total_rooms", "total_bedrooms", "population", "households" ]] \
         .apply(lambda x: np.abs(stats.zscore(x)) < z_thresh) \
         .all(axis=1)
@@ -61,20 +61,16 @@ def drop_numerical_outliers(df, z_thresh=3):
     # Drop (inplace) values set to be rejected
     df.drop(df.index[~constrains], inplace=True)
 
-def evaluate_features_outliers(housing):
-    features_to_hard_filter = ["total_rooms", "total_bedrooms", "households" , "population"]
-    features_to_med_filter = ["households"]
-    features_to_easy_filter = ["population"]
 
-    CLEAN_OUTLIERS_DICT = {'hard_filter': {'features': ["total_rooms", "total_bedrooms"], 'upper_qurant_percent' : 0.95, 'lower_qurant_percent': 0 },
-                           'med_filter': {'features': ["households"], 'upper_qurant_percent' : 0.97, 'lower_qurant_percent': 0 },
-                           'easy_filter': {'features': ["population"],'upper_qurant_percent': 0.97, 'lower_qurant_percent': 0 } }
+
+
+def evaluate_features_outliers(housing: pd.DataFrame):
 
     CLEAN_OUTLIERS_DICT = {'hard_filter': {'features': ["total_rooms", "total_bedrooms"], 'upper_qurant_percent' : 0.975, 'lower_qurant_percent': 0 },
                            'med_filter': {'features': ["households"], 'upper_qurant_percent' : 0.9733, 'lower_qurant_percent': 0 },
                            'easy_filter': {'features': ["population"],'upper_qurant_percent': 0.969, 'lower_qurant_percent': 0 } }
 
-    import pandas as pd
+
     df_empty = pd.DataFrame()
     for inner_dict in CLEAN_OUTLIERS_DICT.values():
         for feature in inner_dict['features']:
@@ -97,11 +93,16 @@ def evaluate_features_outliers(housing):
     housing[["housing_median_age", "median_house_value"]].hist(bins=50, figsize=(8, 4))
     plt.show()
     bb = housing['housing_median_age'].value_counts().sort_values(ascending=False)
-        print(bb.nlargest(10))
+    print(bb.nlargest(10))
 
-import matplotlib.pyplot as plt
-housing2[["housing_median_age"]].hist(bins=50, figsize=(6, 4))
-plt.show()
+    import matplotlib.pyplot as plt
+    housing[["housing_median_age"]].hist(bins=50, figsize=(6, 4))
+    plt.show()
+
+
+
+
+def explore_capped_values(housing: pd.DataFrame):
     df_to_remove = pd.DataFrame()
     to_remove_samples = housing[housing["median_house_value"] == 500001.0]
     df_to_remove = df_to_remove.append(to_remove_samples)

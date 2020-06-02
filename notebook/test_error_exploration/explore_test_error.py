@@ -11,8 +11,9 @@ def explore_test_error(X_test_prepared, y_test,  final_predictions ):
 
     #describe the diffferent total X_TEST features statistics:
     total_test_stats = X_test_prepared.describe()
-    total_test_stats.T.to_csv('total_test_set_stat.csv', index=True)
+    total_test_stats.T.to_csv('total_test_set_stat_v3.csv', index=True)
     #describe the top 50 worst error districts features:
     worst250_df = X_test_prepared.nlargest(250, 'diff_error')
     dd250_stats = worst250_df.describe()
-    dd250_stats.T.to_csv('worst250_test_set_stat.csv', index=True)
+    dd250_stats.T.to_csv('worst250_test_set_stat_v3.csv', index=True)
+
