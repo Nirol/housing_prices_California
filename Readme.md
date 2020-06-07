@@ -5,7 +5,11 @@
 ## Project Objective
 
 The project objective is to predict the median housing value of each  
-block (district) in the state of California.
+block (district) in the state of California.  
+
+This Readme document chronicles the thought and work process from start to finish  
+of this project, shorter version describing the results and final module can  
+ be found [here](../blob/master/Readme_Final.md).
 
 ### Summary & Results.
 
@@ -139,7 +143,7 @@ The reason is we cannot proceed with pattern recognition, outliers cleaning, and
 * The Median income is the only feature heavily correlated by itself to the target  
  variable (median house value), the scatter plot of the correlation of this variable.
  
-  ![Corr_scatter](data/pics/data_exploration/corr_scatter.PNG)
+  ![Corr_scatter](data/pics/data_exploration/corr_scatter.png)
   
 *  The strong correlation is indeed visible on the scatter plot.
 * The house value cap is also very prominent on this plot.
@@ -214,7 +218,7 @@ Might check normlization later on if I end up cutting off most of the outliers d
 ### The Current Data Transformation Pipeline & DataSet
 
 **At this point the data transformation pipeline consist of:**  
-     ![pipeline_v1](data/pics/meta_pipeline/pipeline_V1.PNG)
+     ![pipeline_v1](data/pics/meta_pipeline/pipeline_V1.png)
 
 **The current final training dataset contains 16 total columns:**
 * The original features described at the start of Data Exploration, minus
@@ -230,7 +234,7 @@ Up until this point I **did not** test the following options:
 
 ### Models Chosen For Initial Testing
 Based on scikit learn ml map:
-   ![ml_map](data/pics/meta_pipeline/Ml_map.PNG)
+   ![ml_map](data/pics/meta_pipeline/Ml_map.png)
  
 * I Added both Lasso and ElasticNet models to the initial testing.  
  Both of the models works well for the sparse dataset ( which is partially our  
@@ -399,7 +403,7 @@ to be relatively important.
  ### Capped Target House Median Value
  As explained in the data exploration section The feature house_median_age and  
   the **prediction target** median_house_value values are capped.  
- ![statistics_test](data/pics/capped_values/capped_house_median_value.png)   
+ ![capped_median_value](data/pics/capped_values/capped_house_median_value.png)   
    
   * Another way to view the capped target variable values:  
     Top occurring median_house_value values:
@@ -479,7 +483,7 @@ That is a really big improvement on the test set for ExtraTreeRegressor.
   
  ### Capped Feature House Median Age
  
-  ![statistics_test](data/pics/capped_values/capped_house_median_age.png)   
+  ![capped_median_age](data/pics/capped_values/capped_house_median_age.png)   
 
 A total of 1103 districts with capped median_house_age left after the removal of  
 the capped target feature. 
@@ -528,7 +532,7 @@ RandomForestRegressor(bootstrap=False, max_depth=20, max_features=6,
 
 
 Feature importance of the best estimator:    
- ![statistics_test](data/pics/feature_importance/feature_importance_v2.PNG) 
+ ![feature_importance_V2](data/pics/feature_importance/feature_importance_v2.PNG) 
  
 
  
@@ -550,12 +554,12 @@ Feature importance of the best estimator:
     ]
   ```
 The top parameters combination:  
- ![statistics_test](data/pics/fine_tun/ExtraTreeRegressor_V3.PNG) 
+ ![fine_tune_ext_v3](data/pics/fine_tun/ExtraTreeRegressor_V3.PNG) 
  
  
  
 Feature importance by the best ExtraTreeRegressor estimator:    
- ![statistics_test](data/pics/feature_importance/extra_tree_regressor_feature_importance_v3.PNG) 
+ ![feature_importance_ext_v3](data/pics/feature_importance/extra_tree_regressor_feature_importance_v3.PNG) 
    
 Very similar to the random forest estimator feature importance. 
  
@@ -601,7 +605,7 @@ on the test set error.
  Comparing the statistics of the worst 250 district by error compare to the complete
  test dataset:
  
- ![statistics_test](data/pics/other/compare_test_sets.PNg) 
+ ![statistics_test](data/pics/other/compare_test_sets.PNG) 
   
  In orange, values that are lower in worst 250 districts by error on the test set.  
  In blue, values that are higher.  
@@ -763,3 +767,6 @@ Since our top 2 best estimator is RandomForestRegressor, feature scaling is not
 necessary and don't contribute for better results.
 Moreover, scaling of the feature smooth the non linear realtionships between  
 the different features that.
+
+
+
