@@ -47,3 +47,4 @@ The data cleaning process wrapped in [pipeline_wrapper.py](../blob/master/src/pi
 Complete control over every pipeline step, allowing swift changes to the process  
 for testing can be found in [project_settings.py](../blob/master/src/project_settings.py)
 
+The settings right now produce the best estimator.

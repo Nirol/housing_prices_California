@@ -65,12 +65,12 @@ NUM_ATTRIBS_ALL = ["longitude","latitude","housing_median_age" ,"total_rooms", "
 ####################################3#######
 
 ### LOG TRANSFORM:
-TO_LOG_TRANSFORM = "True"
+TO_LOG_TRANSFORM = "False"
 NUM_ATTRIBS_TO_LOG =["total_rooms", "total_bedrooms", "population",
                    "households"]
 
 ### SCALE TRANSFORM:
-TO_SCALE_FEATURE = "True"
+TO_SCALE_FEATURE = "False"
 NUM_ATTRIBS_TO_SCALE = ["longitude","latitude","housing_median_age", "median_income"]
 
 
