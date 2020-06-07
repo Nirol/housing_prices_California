@@ -33,18 +33,18 @@ RandomForestRegressor(bootstrap=False, max_depth=70, max_features=6,
 
 ## Model
 
-[build_model.py](../blob/master/src/build_model.py) control the estimator building and prediction process.  
+[build_model.py](../master/src/build_model.py) control the estimator building and prediction process.  
 
-The data cleaning process wrapped in [pipeline_wrapper.py](../blob/master/src/pipeline/pipeline_wrapper.py):
+The data cleaning process wrapped in [pipeline_wrapper.py](../master/src/pipeline/pipeline_wrapper.py):
   
 ![pipeline_wrapper](data/pics/meta_pipeline/wrapper_pipe.png)
     
 
-####The Pipeline I run on the train & test sets separately non target features:
+#### The Pipeline I run on the train & test sets separately non target features:
 
 ![pipeline_set](data/pics/meta_pipeline/set_pipeline.png)
 
 Complete control over every pipeline step, allowing swift changes to the process  
-for testing can be found in [project_settings.py](../blob/master/src/project_settings.py)
+for testing can be found in [project_settings.py](../master/src/project_settings.py)
 
 The settings right now produce the best estimator.
