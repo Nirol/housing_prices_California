@@ -9,7 +9,7 @@ block (district) in the state of California.
 
 This Readme document chronicles the thought and work process from start to finish  
 of this project, shorter version describing the results and final module can  
- be found [here](../blob/master/Readme_Final.md).
+ be found [here](../master/Readme_Final.md).
 
 ### Summary & Results.
 
