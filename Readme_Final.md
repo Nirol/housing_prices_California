@@ -37,7 +37,7 @@ RandomForestRegressor(bootstrap=False, max_depth=70, max_features=6,
 
 The data cleaning process wrapped in [pipeline_wrapper.py](../blob/master/src/pipeline/pipeline_wrapper.py):
   
-![pipeline_wrapper](data/pics/meta_pipeline/wrapper pipe.png)
+![pipeline_wrapper](data/pics/meta_pipeline/wrapper_pipe.png)
     
 
 ####The Pipeline I run on the train & test sets separately non target features:
