@@ -1,13 +1,32 @@
 # Median House Prices For California Districts Derived From The 1990 Census.
 
-#### -- Project Status: Active
+####  Project Status: In Progress.
 
 ## Project Objective
 
-The project objective is the prediction of the median housing value of each  
+The project objective is to predict the median housing value of each  
 block (district) in the state of California.
 
+### Summary & Results.
 
+The final model predicts the median house value with a mean error of **40100**.  
+A significant improvement over the hands-on machine learning book chapter on this  
+data-set and over the majority of Kaggle kernels.  
+  
+
+(Not including Geospatial  feature engineering kernel, out of this project scope).  
+  
+  
+The final model use RandomForestRegressor estimator, but the top three estimators  
+were all ensemble methods.  
+
+Random Forest was best fitted to the problem since:  
+* The data contained both categorical and numerical features.
+* The features were all on different ranges of values. 
+* The data was somewhat noisy, large range of value between different  
+districts in the same district.  
+* Random forests can handle correlated features ( our case as I will   
+present in the data exploration section).
 
 
 ### Methods Used
@@ -23,15 +42,17 @@ block (district) in the state of California.
 The California Housing Prices dataset from the StatLib repository, based on   
 the 1990 California census.  
 This data has metrics such as the population, median income, median housing price,  
- and so on for each block group in California.  
- Block groups are the smallest geographical unit for which the US Census Bureau  
-  publishes sample data (a block group typically has a population of 600 to 
-  3,000 people).  
+and so on for each block group in California.  
+Block groups are the smallest geographical unit for which the US Census Bureau  
+publishes sample data (a block group typically has a population of 600 to 
+3,000 people).  
  We will just call them “districts” for short.
 
 I used the Hands-On Machine Learning with Scikit-Learn & TensorFlow book dataset  
 version, containing an additional categorical attribute (ocean approximation)  
 and artificially added missing values.
+
+##Important Note
 
 
 ## Data Exploration
@@ -317,27 +338,36 @@ Before jumping into conclusions, lets re run the gridsearch with higher estimato
  with a RMSE = 48132.99.
 
 
-## Against The Test Set - V1
+## Against The Test Set - Version 1
 
-Predicting the test set yield error : **RMSE =64519.434255026106** very high error,  
-specially compared to the training set error, which imply either overfitting of  
+Predicting the test set yield error: **RMSE =64519.434255026106** very high error,  
+especially compared to the training set error, which implies either overfitting of  
  the model to the train data or another underlying problem.
 
-After some tweaking of the different pipeline options I discover that the  
-standardization caused the very high error on the test set.  
+After some tweaking of the different pipeline options, I discover that the  
+standardization caused a very high error on the test set.  
 By removing it the RMSE on the test set was lowered to **46139.80012933373**.
 
-The reason is scaling using the mean and variance of the data is likely to not  
-work very well if the data contains many outliers. thats our situation since we   
-didn't remove any of the districts with capped values.
+The reason is each numerical feature disturbing is different,  
+some of the features require a log transform due to a large range of values and outliers  
+while others don't.    
+
+Moreover, random forests specifically don't require feature scaling and it might  
+hinder the estimator ability to discover non-linear relationships.
 
 #### Conclusions
-Our options are either to remove standardization all together, use sklearn  
- RobustScaler that might be able to handle outlisers, or remove the outliers  
-  themselvs.
 
-I thoroughly tested the first two options versus the  different initial models  
- options and our current result without standardization is currently the best.
+I can think of multiple options to solve the feature scaling issue:
+* Remove feature scaling all together.
+* Use sklearn RobustScaler that might be able to handle outliers.
+* Remove outliers.
+* Separeate between features that require log transform and other features  
+ that require standardization.
+
+
+I thoroughly tested all options besides removing outliers, removing any type of   
+ feature scaling works best (as expected with random forests).
+  
 
 
 
@@ -393,7 +423,7 @@ Although altering the whole dataset (with emphasis on the test set) is usually
 district into 19675.
 
 
-### Initial Model Testing Version 2
+### Initial Model Testing - Version 2
    ![ml_map](data/pics/feature_importance/initial_regressor_error_V2.PNG)
 
 * Most of the models mean error reduced by a very large margin.
@@ -475,7 +505,7 @@ the capped median age values or not.
 At this stage after a significant improvement on the train set  
 I want to find the best parameters before predicting the test set.
 
-#### <ins>RandomForestRegressor Fine Tuning</ins>
+##### <ins>RandomForestRegressor Fine Tuning</ins>
 
 A basic grid parameter search based on the earlier grid search best results:  
  ```python
@@ -504,7 +534,7 @@ Feature importance of the best estimator:
  
  **The Best RandomForestRegressor Estimator error on the test set is 42708.52**
  
- #### <ins>ExtraTreeRegressor Fine Tuning</ins>
+ ##### <ins>ExtraTreeRegressor Fine Tuning</ins>
  
  It is time to start fine tuning the other top 2 models as well,  
  starting from the ExtraTreeRegressor. As in the random forest models, the most  
@@ -541,13 +571,13 @@ I tested the removal of the two different capped features:
 #### House Median Value
 
 * The model target house_median_value was capped at 500001.0, meaning any district  
- with higher houses median value was set to 500001.0.  
-  This very biased dataset that would mislead predictors to conclude the target  
-   value never pass 500001.0.
+ with higher houses, the median value was set to 500001.0.  
+This is a very biased dataset that would mislead predictors to conclude the target  
+value never pass 500001.0.
 * Removing districts with the capped target value reduced the error on the test  
   set significantly in both tested models.
 * It is important to note the model did have any district samples with higher   
-house median value to learn from, and will probably preform bad on them.
+house median value to learn from, and will probably perform badly on them.
   
 #### House Median Age  
 
@@ -571,7 +601,7 @@ on the test set error.
  Comparing the statistics of the worst 250 district by error compare to the complete
  test dataset:
  
- ![statistics_test](data/pics/compare_test_sets.PNg) 
+ ![statistics_test](data/pics/other/compare_test_sets.PNg) 
   
  In orange, values that are lower in worst 250 districts by error on the test set.  
  In blue, values that are higher.  
@@ -583,7 +613,7 @@ on the test set error.
     districts poorly since it lacks training samples.
    * The ISLANDS tagged district are less represented in the worst 250 districts.
 
- 
+ TODO: 
  ### HuberRegressor Outliers Statistics
  
  One of the HuberRegressor model main features is the classification of each    
@@ -607,7 +637,7 @@ The dataset feature histogram after the removal of capped house_median_value:
   
 
 *  Removal of the top 2.5% - 3% quantile for this 4 features cleaned the histograms:
-    *   ![Features Histogram](data/pics/not_used/histo_clean_outliers_household_pop_rooms.png)
+    *   ![Features Histogram](data/pics/other/histo_clean_outliers_household_pop_rooms.png)
     * Total of 656 outliers districts were removed during this process.
 
 

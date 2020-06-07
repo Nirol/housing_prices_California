@@ -7,6 +7,16 @@ from data.get_data_helper import PROJECT_FOLDER
 
 
 class ModelResult:
+    """
+    Transformer to remove outliers based on project setting CLEAN_OUTLIERS_DICT.
+
+    Methods
+    -------
+    transform(housing):
+        Transform the dataframe data, returning filtered dataframe.
+
+    """
+    
     def __init__(self, name, model, scores):
         self.model_name = name
         self.model = model
@@ -58,24 +68,24 @@ def test_model_on_trainning_set_cv(housing, housing_labels, model, model_name):
 
 
 
-def initial_model_try(housing_transformed, housing_labels):
-    housing_transformed = housing
+def initial_model_try(housing, housing_labels):
+
     models_dict = {}
-    col_list = list(housing_transformed.columns)
+    col_list = list(housing.columns)
 
 
     print("1. Linear Rregression")
     from sklearn.linear_model import LinearRegression
     lin_reg = LinearRegression()
-    lin_reg.fit(housing_transformed, housing_labels)
-    models_dict["Linear Rregression"] = test_model_on_trainning_set_cv(housing_transformed, housing_labels, lin_reg, "Linear Rregression")
+    lin_reg.fit(housing, housing_labels)
+    models_dict["Linear Rregression"] = test_model_on_trainning_set_cv(housing, housing_labels, lin_reg, "Linear Rregression")
 
 
     print("2. DecisionTreeRegressor")
     from sklearn.tree import DecisionTreeRegressor
     tree_reg = DecisionTreeRegressor()
-    tree_reg.fit(housing_transformed, housing_labels)
-    models_dict["DecisionTreeRegressor"] = test_model_on_trainning_set_cv(housing_transformed, housing_labels, tree_reg, "DecisionTreeRegressor")
+    tree_reg.fit(housing, housing_labels)
+    models_dict["DecisionTreeRegressor"] = test_model_on_trainning_set_cv(housing, housing_labels, tree_reg, "DecisionTreeRegressor")
     models_dict["DecisionTreeRegressor"].set_feature_importance(col_list)
 
 
@@ -83,8 +93,8 @@ def initial_model_try(housing_transformed, housing_labels):
     print("3. RandomForestRegressor")
     from sklearn.ensemble import RandomForestRegressor
     forest_reg = RandomForestRegressor()
-    forest_reg.fit(housing_transformed, housing_labels)
-    models_dict["RandomForestRegressor"] = test_model_on_trainning_set_cv(housing_transformed, housing_labels, forest_reg, "RandomForestRegressor")
+    forest_reg.fit(housing, housing_labels)
+    models_dict["RandomForestRegressor"] = test_model_on_trainning_set_cv(housing, housing_labels, forest_reg, "RandomForestRegressor")
     models_dict["RandomForestRegressor"].set_feature_importance(col_list)
     print(forest_reg.feature_importances_)
 
@@ -92,8 +102,8 @@ def initial_model_try(housing_transformed, housing_labels):
     print("4. Lasso")
     from sklearn import linear_model
     lasso = linear_model.Lasso(max_iter=100000, alpha=0.1, tol= 0.01)
-    lasso.fit(housing_transformed, housing_labels)
-    models_dict["Lasso"] = test_model_on_trainning_set_cv(housing_transformed, housing_labels, lasso, "Lasso")
+    lasso.fit(housing, housing_labels)
+    models_dict["Lasso"] = test_model_on_trainning_set_cv(housing, housing_labels, lasso, "Lasso")
 
 
 
@@ -101,24 +111,24 @@ def initial_model_try(housing_transformed, housing_labels):
     print("5. ElasticNet")
     from sklearn import linear_model
     e_net = linear_model.ElasticNet(alpha=0.1)
-    e_net.fit(housing_transformed, housing_labels)
-    models_dict["ElasticNet"] = test_model_on_trainning_set_cv(housing_transformed, housing_labels, e_net, "ElasticNet")
+    e_net.fit(housing, housing_labels)
+    models_dict["ElasticNet"] = test_model_on_trainning_set_cv(housing, housing_labels, e_net, "ElasticNet")
 
 
 
 
     print("6. Ridge")
     reg = linear_model.Ridge(alpha=.5)
-    reg.fit(housing_transformed, housing_labels)
-    models_dict["Ridge"] = test_model_on_trainning_set_cv(housing_transformed, housing_labels, reg, "Ridge")
+    reg.fit(housing, housing_labels)
+    models_dict["Ridge"] = test_model_on_trainning_set_cv(housing, housing_labels, reg, "Ridge")
 
 
 
     print("7. SVR")
     from sklearn import svm
     svr = svm.SVR()
-    svr.fit(housing_transformed, housing_labels)
-    models_dict["SVR"] = test_model_on_trainning_set_cv(housing_transformed, housing_labels, svr, "SVR")
+    svr.fit(housing, housing_labels)
+    models_dict["SVR"] = test_model_on_trainning_set_cv(housing, housing_labels, svr, "SVR")
 
 
     print("9. HuberRegressor")
@@ -139,21 +149,21 @@ def initial_model_try(housing_transformed, housing_labels):
 
     from sklearn.neighbors import KNeighborsRegressor
     neigh = KNeighborsRegressor()
-    neigh.fit(housing_transformed, housing_labels)
-    models_dict["K NN"] = test_model_on_trainning_set_cv(housing_transformed, housing_labels, neigh, "K NN")
+    neigh.fit(housing, housing_labels)
+    models_dict["K NN"] = test_model_on_trainning_set_cv(housing, housing_labels, neigh, "K NN")
 
     print("11 KernelRidge")
     from sklearn.kernel_ridge import KernelRidge
     KRR = KernelRidge()
-    KRR.fit(housing_transformed, housing_labels)
-    models_dict["KRR"] = test_model_on_trainning_set_cv(housing_transformed, housing_labels, KRR, "KRR")
+    KRR.fit(housing, housing_labels)
+    models_dict["KRR"] = test_model_on_trainning_set_cv(housing, housing_labels, KRR, "KRR")
 
     print("13 SGDR")
 
     from sklearn.linear_model import SGDRegressor
     SGDR = SGDRegressor(max_iter=1000, tol=1e-3)
-    SGDR.fit(housing_transformed, housing_labels)
-    models_dict["SGDR"] = test_model_on_trainning_set_cv(housing_transformed, housing_labels, SGDR, "SGDR")
+    SGDR.fit(housing, housing_labels)
+    models_dict["SGDR"] = test_model_on_trainning_set_cv(housing, housing_labels, SGDR, "SGDR")
     import pickle
     with open('ml_intro_SGDR.pickle', 'wb') as handle:
                 pickle.dump(models_dict, handle)
@@ -163,8 +173,8 @@ def initial_model_try(housing_transformed, housing_labels):
     from sklearn.ensemble import ExtraTreesRegressor
 
     etr = ExtraTreesRegressor(n_estimators=100, random_state=0)
-    etr.fit(housing_transformed, housing_labels)
-    models_dict["etr"] = test_model_on_trainning_set_cv(housing_transformed,housing_labels, etr, "etr")
+    etr.fit(housing, housing_labels)
+    models_dict["etr"] = test_model_on_trainning_set_cv(housing,housing_labels, etr, "etr")
 
 
 
@@ -173,47 +183,8 @@ def initial_model_try(housing_transformed, housing_labels):
     from sklearn.neural_network import MLPRegressor
     print("17 MLPRegressor")
     mlp = MLPRegressor(random_state=1, tol=0.001)
-    mlp.fit(housing_transformed, housing_labels)
-    models_dict["mlp"] = test_model_on_trainning_set_cv(housing_transformed,housing_labels, mlp, "mlp")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    ## consolidate the top 3 performing models to the end of the script, I will
-    # run most of the later test cycles only  on this 3
-
-    print("3. RandomForestRegressor")
-    from sklearn.ensemble import RandomForestRegressor
-    forest_reg = RandomForestRegressor()
-    forest_reg.fit(train_set_X, train_set_Y)
-    models_dict["RandomForestRegressor"] = test_model_on_trainning_set_cv(train_set_X, train_set_Y, forest_reg, "RandomForestRegressor")
-    models_dict["RandomForestRegressor"].set_feature_importance(col_list)
-    print(forest_reg.feature_importances_)
-
-
-
-
-
-
-    print("16 ExtraTreesRegressor")
-    from sklearn.ensemble import ExtraTreesRegressor
-
-    etr = ExtraTreesRegressor(n_estimators=100, random_state=0)
-    etr.fit(train_set_X, train_set_Y)
-    models_dict["etr"] = test_model_on_trainning_set_cv(train_set_X,train_set_Y, etr, "etr")
-
-
-
+    mlp.fit(housing, housing_labels)
+    models_dict["mlp"] = test_model_on_trainning_set_cv(housing,housing_labels, mlp, "mlp")
 
 
 
@@ -222,37 +193,37 @@ def initial_model_try(housing_transformed, housing_labels):
 
     print("18 GradientBoostingRegressor")
     gbr = GradientBoostingRegressor(random_state=1)
-    gbr.fit(train_set_X, train_set_Y)
-    models_dict["gbr"] = test_model_on_trainning_set_cv(train_set_X,train_set_Y, gbr, "gbr")
+    gbr.fit(housing, housing_labels)
+    models_dict["gbr"] = test_model_on_trainning_set_cv(housing, housing_labels, gbr, "gbr")
 
 
 
 
 
-def initial_model_test(train_set_X, train_set_Y ):
+def initial_model_test_top3_estimators(train_set_X, train_set_Y ):
 
     models_dict = {}
     col_list = list(train_set_X.columns)
 
 
-    # print("3. RandomForestRegressor")
-    # from sklearn.ensemble import RandomForestRegressor
-    # forest_reg = RandomForestRegressor()
-    # forest_reg.fit(train_set_X, train_set_Y)
-    # models_dict["RandomForestRegressor"] = test_model_on_trainning_set_cv(train_set_X, train_set_Y, forest_reg, "RandomForestRegressor")
-    # models_dict["RandomForestRegressor"].set_feature_importance(col_list)
-    # print(forest_reg.feature_importances_)
+    print("RandomForestRegressor")
+    from sklearn.ensemble import RandomForestRegressor
+    forest_reg = RandomForestRegressor()
+    forest_reg.fit(train_set_X, train_set_Y)
+    models_dict["RandomForestRegressor"] = test_model_on_trainning_set_cv(train_set_X, train_set_Y, forest_reg, "RandomForestRegressor")
+    models_dict["RandomForestRegressor"].set_feature_importance(col_list)
+    print(forest_reg.feature_importances_)
 
 
-    # print("16 ExtraTreesRegressor")
-    # from sklearn.ensemble import ExtraTreesRegressor
-    #
-    # etr = ExtraTreesRegressor(n_estimators=100, random_state=0)
-    # etr.fit(train_set_X, train_set_Y)
-    # models_dict["etr"] = test_model_on_trainning_set_cv(train_set_X,train_set_Y, etr, "etr")
+    print("ExtraTreesRegressor")
+    from sklearn.ensemble import ExtraTreesRegressor
+
+    etr = ExtraTreesRegressor(n_estimators=100, random_state=0)
+    etr.fit(train_set_X, train_set_Y)
+    models_dict["etr"] = test_model_on_trainning_set_cv(train_set_X,train_set_Y, etr, "etr")
 
 
-    print("18 GradientBoostingRegressor")
+    print("GradientBoostingRegressor")
     gbr = GradientBoostingRegressor(random_state=1)
     gbr.fit(train_set_X, train_set_Y)
     models_dict["gbr"] = test_model_on_trainning_set_cv(train_set_X,train_set_Y, gbr, "gbr")

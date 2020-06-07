@@ -3,17 +3,15 @@ import numpy as np
 from sklearn.model_selection import GridSearchCV
 from sklearn.linear_model import HuberRegressor
 import pickle
+import pandas as pd
 
-
-def fine_tune_huberregressor(housing, housing_labels, file_path=None):
+def fine_tune_huberregressor(housing: pd.DataFrame, housing_labels: pd.DataFrame, file_path=None):
     """
+    Separate fine tune method for the huberregressor
 
-    :param housing:
-    :type housing:
-    :param housing_labels:
-    :type housing_labels:
-    :param file_path:
-    :type file_path:
+
+    :param housing: The dataframe input.
+    :type housing: pd.DataFrame
     """
     param_grid = [
         {'epsilon': [1, 1.2,1.35, 1.5, 1.75], 'max_iter': [5000],
@@ -48,10 +46,18 @@ def _print_feature_importance(housing_df, feature_importance):
 
 
 
-def hyperparams_grid_search(housing_df, housing_labels, file_path=None):
+def hyperparams_grid_search(housing_df: pd.DataFrame, housing_labels: pd.DataFrame, file_path=None):
+    """
+    hyperparams grid search method. the method saves the result into disk
+    print each parameter combination mean error and std.
+    In case the  estimator produce feature importance the method will print it.
 
 
+    :param housing: The dataframe input.
+    :type housing: pd.DataFrame
+    """
 
+    # parameter grid for gridsearch, adusted for estimator being used.
     param_grid = [
 
         {'bootstrap': [False], 'n_estimators': [600],
@@ -61,7 +67,7 @@ def hyperparams_grid_search(housing_df, housing_labels, file_path=None):
          },
     ]
 
-
+    # The estimator used
     forest_reg = RandomForestRegressor()
     grid_search = GridSearchCV(forest_reg, param_grid, cv=5, verbose=8,
                                scoring='neg_mean_squared_error')

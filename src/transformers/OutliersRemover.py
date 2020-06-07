@@ -1,6 +1,6 @@
 import pandas as pd
 
-from src.pipeline.pipeline_constants import CLEAN_OUTLIERS_DICT
+from src.project_settings import CLEAN_OUTLIERS_DICT
 
 
 def _samples_to_remove(isUpperValue, housing,feature, inner_dict):
@@ -14,7 +14,16 @@ def _samples_to_remove(isUpperValue, housing,feature, inner_dict):
 
 
 class OutliersRemover():
-    def transform(self, housing, y=None):
+    """
+    Transformer to remove outliers based on project setting CLEAN_OUTLIERS_DICT.
+
+    Methods
+    -------
+    transform(housing):
+        Transform the dataframe data, returning filtered dataframe.
+
+    """
+    def transform(self, housing: pd.DataFrame)-> pd.DataFrame:
         df_empty = pd.DataFrame()
         for inner_dict in CLEAN_OUTLIERS_DICT.values():
             for feature in inner_dict['features']:

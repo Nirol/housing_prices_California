@@ -13,6 +13,12 @@ TO_REMOVE_CAPPED_MEDIAN_AGE =   "False"
 MEDIAN_AGE_FEATURE_NAME = "housing_median_age"
 
 
+CAPPED_VALUE_DICT = {
+    'median_house_value':  500001.0,
+    'housing_median_age':  52.0
+
+}
+
 ## Outliers PipeLine Options
 
 # Set which Filter to filter and by how much upper quantile and lower quantile.
@@ -41,13 +47,13 @@ CLEAN_OUTLIERS_DICT = {
 #### initial pipeline constants ####
 ###################################
 # category attributes
-CAT_ATTRIBS = ["ocean_proximity"]
+CAT_ATTRIBS_TO_ONE_HOT_ENCODE = ["ocean_proximity"]
 
 # numerical attributes to impute and then log transform
 # (combined in our pipeline since only total_rooms need impute
 
 NUM_ATTRIBS_TO_IMPUTE =["total_rooms"]
-
+IMPUTE_TYPE = 'median'
 
 
 
@@ -101,5 +107,11 @@ NUM_FEATURES_TO_REMOVE =['total_rooms', 'population', 'total_bedrooms',
                          'households']
 
 FEATURES_TO_REMOVE =[] # NUM_FEATURES_TO_REMOVE + CAT_FEATURES_TO_REMOVE
+
+
+
+
+
+
 
 
