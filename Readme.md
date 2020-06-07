@@ -234,7 +234,7 @@ Up until this point I **did not** test the following options:
 
 ### Models Chosen For Initial Testing
 Based on scikit learn ml map:
-   ![ml_map](data/pics/meta_pipeline/Ml_map.png)
+   ![ml_map](data/pics/meta_pipeline/ml_map.png)
  
 * I Added both Lasso and ElasticNet models to the initial testing.  
  Both of the models works well for the sparse dataset ( which is partially our  
@@ -408,11 +408,11 @@ to be relatively important.
   * Another way to view the capped target variable values:  
     Top occurring median_house_value values:
      
-    | Value    Count |
-    |---------------|
-    | 500001\.0    965 |
-    | 137500\.0     122 |
-    | 162500\.0     117 |  
+    | Value |  Count |
+    |----------|-----|
+    | 500001\.0  |  965 |
+    | 137500\.0  |  122 |
+    | 162500\.0  |  117 |  
    
 Although altering the whole dataset (with emphasis on the test set) is usually  
  incorrect, the bias towards the capped target values will teach the predictor  
@@ -428,7 +428,7 @@ district into 19675.
 
 
 ### Initial Model Testing - Version 2
-   ![ml_map](data/pics/feature_importance/initial_regressor_error_V2.PNG)
+   ![initial_model_testing_v2](data/pics/feature_importance/initial_regressor_error_V2.PNG)
 
 * Most of the models mean error reduced by a very large margin.
 * K-NN preforms much worse after the removal of the capped target samples
@@ -617,7 +617,7 @@ on the test set error.
     districts poorly since it lacks training samples.
    * The ISLANDS tagged district are less represented in the worst 250 districts.
 
- TODO: 
+
  ### HuberRegressor Outliers Statistics
  
  One of the HuberRegressor model main features is the classification of each    
